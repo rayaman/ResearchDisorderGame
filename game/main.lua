@@ -7,3 +7,4 @@ require("core.AudioManager")
 require("core.GuiManager")
 require("parseManager")
 gui.ff.Color=Color.Black
+-- I just added this
