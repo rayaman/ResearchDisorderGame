@@ -684,6 +684,9 @@ if love then
 		temp.filepath=file
 		return temp
 	end
+	function bin.fileExists(name)
+		return love.filesystem.exists(name)
+	end
 	function bin:tofile(filename)
 		if not(filename) or self.Stream then return nil end
 		love.filesystem.write(filename,self.data)

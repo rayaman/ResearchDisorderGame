@@ -42,7 +42,6 @@ function gui:newBase(tp,name, x, y, w, h, sx ,sy ,sw ,sh)
 	c:SetName(name)
 	c.BorderSize=1
 	c.BorderColor={0,0,0}
-	c.BorderVisibility=1
 	c.VIS=true
 	c.Visible=true
 	c.oV=true

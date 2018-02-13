@@ -67,10 +67,10 @@ function gui:drawR()
 			_GuiPro.Clips[tostring(self)]=self
 			love.graphics.setScissor(self.x, self.y, self.width, self.height)
 		end
-		if self:hasRoundness() then
-		  love.graphics.stencil(self.stfunc, "replace", 1)
-		  love.graphics.setStencilTest("greater", 0)
-		end
+    if self:hasRoundness() then
+      love.graphics.stencil(self.stfunc, "replace", 1)
+      love.graphics.setStencilTest("greater", 0)
+    end
 		love.graphics.rectangle("fill", self.x, self.y, self.width, self.height,(self.rx or 1)*self.DPI,(self.ry or 1)*self.DPI,(self.segments or 1)*self.DPI)
 		if string.find(self.Type, "Image") then
 			self:ImageRule()
@@ -78,10 +78,10 @@ function gui:drawR()
 		if self.Type=="Video" then
 			self:VideoRule()
 		end
-		if self:hasRoundness() then
-		  love.graphics.setStencilTest()
-		end
-		love.graphics.setColor(self.BorderColor[1], self.BorderColor[2], self.BorderColor[3],self.BorderVisibility*254)
+    if self:hasRoundness() then
+      love.graphics.setStencilTest()
+    end
+		love.graphics.setColor(self.BorderColor[1], self.BorderColor[2], self.BorderColor[3],self.Visibility*254)
 		for b=0,self.BorderSize-1 do
 			love.graphics.rectangle("line", self.x-(b/2), self.y-(b/2), self.width+b, self.height+b,(self.rx or 1)*self.DPI,(self.ry or 1)*self.DPI,(self.segments or 1)*self.DPI)
 		end

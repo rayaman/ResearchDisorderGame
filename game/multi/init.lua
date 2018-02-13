@@ -1166,7 +1166,7 @@ function multi:newUpdater(skip)
 		end
 		self.pos=self.pos+1
 	end
-	function c:setSkip(n)
+	function c:SetSkip(n)
 		self.skip=n
 	end
 	c.OnUpdate=self.OnMainConnect

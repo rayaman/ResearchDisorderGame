@@ -1,0 +1,16 @@
+LOAD gamedata/lobby.txt
+[CONFIG]{
+	//newThread("THREAD") // Starts a thread that handles events and stuff... Just throw this in and things flow nicely
+	SND_ELEVATOR_BG=loadAudio("audio/elevator.ogg")
+	SND_ELEVATOR_OPEN_CLOSE=loadAudio("audio/elevator_open_close.mp3")
+	SND_ROPE_CRACKING=loadAudio("audio/rope_cracking.mp3")
+	SND_FOOTSTEPS=loadAudio("audio/footsteps.ogg")
+	JUMP("LOBBY") // Lets start the game Jumping to block lobby in lobby.txt
+}
+[THREAD]{
+	::threadloop::
+		sleep(.001) // No need to put this in, but it is used to help show you whats going on
+		//Setting up a thread alone allows for events to be process automatically
+		//All variables are shared between all threads! Functions binded to the external language will be ran in a thread
+		GOTO("threadloop")
+}

@@ -1,0 +1,3 @@
+ENTRY CONFIG
+LOAD gamedata/config.txt
+//A file without blocks needs at least 1 new line to be properly parsed

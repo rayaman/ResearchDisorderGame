@@ -6,7 +6,7 @@
 	+Enhance VFS stuff
 ]]
 bin={}
-bin.Version={4,5,0}
+bin.Version={4,1,0}
 bin.stage='stable'
 bin.help=[[
 For a list of features do print(bin.Features)
@@ -17,8 +17,8 @@ For help do print(bin.help) :D
 ]]
 bin.credits=[[
 Credits:
-	Crafted by, Ryan Ward
-	lzw,bit shift, and b64 conversion are not mine
+	Everything by me, Ryan Ward
+	Except the randomGen Stuff I forgot who i took that from, edits by me though :)
 ]]
 bin.Features=bin.Version[1]..'.'..bin.Version[2]..'.'..bin.Version[3]..' '..bin.stage..[[
 
@@ -51,7 +51,6 @@ vfs			=	bin.loadVFS(path)							-- loads a saved .lvfs file				--Beta
 buf			=	bin:newDataBuffer(s)						-- creates a databuffer
 binobj		=	bin.bufferToBin(b)							-- converts a buffer object to a bin object
 buf			=	bin.binToBuffer(b)							-- converts a bin object to a buffer obj
-buf			=	bin:getDataBuffer(a,b)						-- gets a speical buffer that opperates on a streamed file. It works just like a regular data buffer
 blockWriter =	bin.newNamedBlock(indexSize)				-- returns a block writer object index size is the size of the index where labels and pointers are stored
 blockWriter =	bin.newStreamedNamedBlock(indexSize,path)	-- returns a streamed version of the above path is the path to write the file
 blockReader =	bin.loadNamedBlock(path)					-- returns a block reader object, path is where the file is located
@@ -64,8 +63,8 @@ Helpers
 -------
 string	=	bin.randomName(n,ext)					-- creates a random file name if n and ext is nil then a random length is used, and '.tmp' extension is added
 string	=	bin.NumtoHEX(n)							-- turns number into hex
-binobj	=	bin.HEXtoBin(s)*D						-- turns hex data into binobj
-string	=	bin.HEXtoStr(s)*D						-- turns hex data into string/text
+binobj	=	bin.HEXtoBin(s)							-- turns hex data into binobj
+string	=	bin.HEXtoStr(s)							-- turns hex data into string/text
 string	=	bin.tohex(s)							-- turns string to hex
 string	=	bin.fromhex(s)							-- turns hex to string
 string	=	bin.endianflop(data)					-- flips the high order bits to the low order bits and viseversa
@@ -158,7 +157,6 @@ string	=	bitobj:getBin()		-- returns 1's & 0's of the bitobj
 * not compatible with stream files
 ** works but do not use with large files or it works to some degree
 *** in stream objects all changes are made directly to the file, so there is no need to do tofile()
-*D
 ]]
 
 bin.Changelog=[[
@@ -285,77 +283,11 @@ Woot!!! Version 3
 			Issue with indexing
 	TODO:
 		Allow streamed files to have expanding indexes
-4.2.0:(12/21/2016)
-	Added:
-		bin.gcd(m,n) *takes number types returns a number
-			gets the greatest common denominator between 2 numbers m and n
-		bin.numToFraction(num) *takes number type returns a string type
-			converts a decimal to a fraction
-			so 5.5 would become 11/2
-		bin.doubleToString(double) *takes number type returns string
-			converts a double to a string
-		bin.stringToDouble(str) *takes string type returns number type
-			converts the doublestring into a number
-			NOTE: this string can be 2 lengths! Either 9 bytes or 25 bytes... depending on the precision needed the program will convert the data
-			Also: the miniheader -/+ is for 9byte doubles the miniheader _/=(same keys as -/+ on an American keyboard) is for 25byte doubles
-	Changed:
-		bits.numToBytes(n,fit,func)
-		added argument func which is called when the number n takes up more space than size 'fit'
-		passes a ref table with keys num and fit, modifying these effects the output.
-		Note: If you change ref.fit make sure to make ref.num fits by adding \0 to the beginning of the numberstring
-	TODO:
-		add more useful features :P
-4.2.1:(12/23/2016)
-	Added:
-		bin.decompress(comp) lzw commpression
-		bin.compress(uncomp) lzw decommpression
-		bin:segmentedRead(size,func)
-4.3.0:(12/26/2016)
-	Added:
-		bin.tob64(data)
-			converts string data to b64 data
-		bin.fromb64(data)
-			converts b64 data to string data
-		bin:getB64()
-			returns b64 data from binobj
-		bits.lsh(value,shift) bit lshift
-		bits.rsh(value,shift) bit rshift
-		bits.bit(x,b) bit thing
-		bits.lor(x,y) or
-	Changed:
-		bin.new(data,hex,b64) hex if true treats data as hexdata, b64 if true treats data like b64data
-			Now allows b64 data to be used in construction of a bin file
-4.4.0:(1/1/2017)
-	Added:
-		sinkobj=bin:newSink()
-			nil=sinkobj:tackE(data)
-				adds data into the sink, same method that binobj and streamobjs have. This does what you would expest the binobj to do but much quicker
-			nil=sinkobj:tofile(path)
-				creates a file containing the contents of the sink
-			str=sinkobj:getData()
-				returns the data of the sink as a string
-			nil=sinkobj:reset()
-				Clears the sink
-4.4.1:(1/2/2017)
-	Changed:
-		bin.stream(file,lock)
-			Modified stream files so that multiple streams can link to one file by sharing handles
-4.4.2:(1/10/2017)
-	Added:
-		bin.freshStream(file)
-			creates a stream object that wipes all data if the file already exists and readys the object for writing. In short it's doing: bin.new():tofile(file) return bin.stream(file,false)
-			-- I found myself doing that so much I made a method to simplify the process
-4.5.0:(3/31/2017)
-	Added:
-		bin:getDataBuffer(a,b) -- a and b are the location to open on the streamed object they are not required though
-		-- If left out the entire file is open to used as a buffer! Even a empty streamed file works. Be sure to fill the buffer before trying to write to a location without data
-		-- Index 1 is the start regardless of where you open up the file
-	Note: Only works on streamed files! Use bin:newDataBuffer(s) to use the non streamed version
 ]]
 bin.data=''
 bin.t='bin'
 bin.__index = bin
-bin.__tostring=function(self) return self:getData() end
+bin.__tostring=function(self) return self.data end
 bin.__len=function(self) return self:getlength() end
 bits={}
 bits.data=''
@@ -364,7 +296,6 @@ bits.__index = bits
 bits.__tostring=function(self) return self.data end
 bits.__len=function(self) return (#self.data)/8 end
 bin.lastBlockSize=0
-bin.streams={} -- allows for multiple stream objects on one file... tricky stuff lol
 --[[----------------------------------------
 Links
 ------------------------------------------]]
@@ -666,16 +597,6 @@ function io.getFullName(name)
 		return string.reverse(string.sub(temp,1,b-1))
 	end
 	return temp
-end
-function io.getName(file)
-	local name=io.getFullName(file)
-	name=string.reverse(name)
-	a,b=string.find(name,'.',1,true)
-	name=string.sub(name,a+1,-1)
-	return string.reverse(name)
-end
-function io.getPathName(path)
-	return path:sub(1,#path-#io.getFullName(path))
 end
 function table.merge(t1, t2)
     for k,v in pairs(t2) do
@@ -980,121 +901,9 @@ function randomGen:newND(a,b,s)
 	end
 	return temp
 end
-lzw = {}
-function lzw.encode(uncompressed) -- string
-  local dictionary, result, dictSize, w, c = {}, {}, 255, ""
-  for i = 0, 255 do
-    dictionary[string.char(i)] = i
-  end
-  for i = 1, #uncompressed do
-    c = string.sub(uncompressed, i, i)
-    if dictionary[w .. c] then
-      w = w .. c
-    else
-      table.insert(result, dictionary[w])
-      dictSize = dictSize + 1
-      dictionary[w .. c] = dictSize
-      w = c
-    end
-  end
-  if w ~= "" then
-    table.insert(result, dictionary[w])
-  end
-  return result
-end
-
-function lzw.decode(compressed) -- table
-  local dictionary, dictSize, entry, result, w, k = {}, 255, "", "", ""
-  for i = 0, 255 do
-    dictionary[i] = string.char(i)
-  end
-  for i = 1, #compressed do
-    k = compressed[i]
-    if dictionary[k] then
-      entry = dictionary[k]
-    elseif k == dictSize then
-      entry = w .. string.sub(w, 1, 1)
-    else
-      return nil, i
-    end
-    result = result .. entry
-    dictionary[dictSize] = w .. string.sub(entry, 1, 1)
-    dictSize = dictSize + 1
-    w = entry
-  end
-  return result
-end
 --[[----------------------------------------
 BIN
 ------------------------------------------]]
-
-function bin:newSink()
-	local c={}
-	c.data={}
-	c.name="sinkobj"
-	c.num=1
-	c.type="sink"
-	function c:tackE(data)
-		self.data[self.num]=data
-		self.num=self.num+1
-	end
-	function c:tofile(path)
-		bin.new(table.concat(self.data)):tofile(path)
-	end
-	function c:getData()
-		return table.concat(self.data)
-	end
-	function c:reset()
-		self.data={}
-	end
-	function c:close()
-		-- does nothing lol
-	end
-	return c
-end
-function bin:segmentedRead(size,func)
-	local mSize=self:getSize()
-	local pSize=size
-	local iter=math.ceil(mSize/pSize)
-	for i=0,iter-1 do
-		func(self:sub((i*pSize)+1,(i+1)*pSize))
-	end
-end
-function bin.compress(uncomp,n)
-	n=n or 9
-	local cipher = lzw.encode(uncomp)
-	local dat={}
-	for i=1,#cipher do
-		local fix=bits.new(cipher[i]).data:match("0*(%d+)")
-		if cipher[i]==0 then
-			fix=string.rep("0",n)
-		end
-		fix=string.rep("0",n-#fix)..fix
-		table.insert(dat,fix)
-	end
-	str=table.concat(dat,"")
-	str=string.rep("0",8-#str%8)..str
-	comp={}
-	for i=0,(#str/8) do
-		table.insert(comp,bits.new(str:sub(i*8+1,i*8+8)):toSbytes())
-	end
-	return table.concat(comp,"")
-end
-function bin.decompress(comp,n)
-	n=n or 9
-	local tab={}
-	for i=1,#comp do
-		table.insert(tab,bits.new(comp:sub(i,i)).data)
-	end
-	tab=table.concat(tab,"")
-	tab=tab:match("0*(%d+)")
-	tab=string.rep("0",n-#tab%n)..tab
-	uncomp={}
-	for i=0,(#tab/n) do
-		table.insert(uncomp,tonumber(tab:sub(i*n+1,i*n+n),2))
-	end
-	return lzw.decode(uncomp)
-end
 function bin:getSize()
 	return self:getlength()
 end
@@ -1140,39 +949,10 @@ function bin:find(...)
 	return self.data:find(...)
 end
 function bin.fromhex(str)
+	print(str)
     return (str:gsub('..', function (cc)
         return string.char(tonumber(cc, 16))
     end))
-end
-
--- working lua base64 codec (c) 2006-2008 by Alex Kloss
--- compatible with lua 5.1
--- http://www.it-rfc.de
--- licensed under the terms of the LGPL2
-bin.base64chars = {[0]='A',[1]='B',[2]='C',[3]='D',[4]='E',[5]='F',[6]='G',[7]='H',[8]='I',[9]='J',[10]='K',[11]='L',[12]='M',[13]='N',[14]='O',[15]='P',[16]='Q',[17]='R',[18]='S',[19]='T',[20]='U',[21]='V',[22]='W',[23]='X',[24]='Y',[25]='Z',[26]='a',[27]='b',[28]='c',[29]='d',[30]='e',[31]='f',[32]='g',[33]='h',[34]='i',[35]='j',[36]='k',[37]='l',[38]='m',[39]='n',[40]='o',[41]='p',[42]='q',[43]='r',[44]='s',[45]='t',[46]='u',[47]='v',[48]='w',[49]='x',[50]='y',[51]='z',[52]='0',[53]='1',[54]='2',[55]='3',[56]='4',[57]='5',[58]='6',[59]='7',[60]='8',[61]='9',[62]='-',[63]='_'}
-function bin.tob64(data)
-	local bytes = {}
-	local result = ""
-	for spos=0,string.len(data)-1,3 do
-		for byte=1,3 do bytes[byte] = string.byte(string.sub(data,(spos+byte))) or 0 end
-		result = string.format('%s%s%s%s%s',result,bin.base64chars[bits.rsh(bytes[1],2)],bin.base64chars[bits.lor(bits.lsh((bytes[1] % 4),4), bits.rsh(bytes[2],4))] or "=",((#data-spos) > 1) and bin.base64chars[bits.lor(bits.lsh(bytes[2] % 16,2), bits.rsh(bytes[3],6))] or "=",((#data-spos) > 2) and bin.base64chars[(bytes[3] % 64)] or "=")
-	end
-	return result
-end
-bin.base64bytes = {['A']=0,['B']=1,['C']=2,['D']=3,['E']=4,['F']=5,['G']=6,['H']=7,['I']=8,['J']=9,['K']=10,['L']=11,['M']=12,['N']=13,['O']=14,['P']=15,['Q']=16,['R']=17,['S']=18,['T']=19,['U']=20,['V']=21,['W']=22,['X']=23,['Y']=24,['Z']=25,['a']=26,['b']=27,['c']=28,['d']=29,['e']=30,['f']=31,['g']=32,['h']=33,['i']=34,['j']=35,['k']=36,['l']=37,['m']=38,['n']=39,['o']=40,['p']=41,['q']=42,['r']=43,['s']=44,['t']=45,['u']=46,['v']=47,['w']=48,['x']=49,['y']=50,['z']=51,['0']=52,['1']=53,['2']=54,['3']=55,['4']=56,['5']=57,['6']=58,['7']=59,['8']=60,['9']=61,['-']=62,['_']=63,['=']=nil}
-function bin.fromb64(data)
-	local chars = {}
-	local result=""
-	for dpos=0,string.len(data)-1,4 do
-		for char=1,4 do chars[char] = bin.base64bytes[(string.sub(data,(dpos+char),(dpos+char)) or "=")] end
-		result = string.format('%s%s%s%s',result,string.char(bits.lor(bits.lsh(chars[1],2), bits.rsh(chars[2],4))),(chars[3] ~= nil) and string.char(bits.lor(bits.lsh(chars[2],4), bits.rsh(chars[3],2))) or "",(chars[4] ~= nil) and string.char(bits.lor(bits.lsh(chars[3],6) % 192, (chars[4]))) or "")
-	end
-	return result
-end
--- ^^
-
-function bin:getB64()
-	return bin.tob64(self.data)
 end
 if table.unpack==nil then
 	table.unpack=unpack
@@ -1192,38 +972,22 @@ function bin:streamData(a,b)
 		error('Invalid args!!! Is do you have a valid stream handle or is this a streamable object?')
 	end
 end
-function bin.new(data,hex,b64)
+function bin.new(data,hex)
 	data=data or ""
 	data=tostring(data)
 	local c = {}
     setmetatable(c, bin)
-	if string.sub(data,1,2)=='0x' and hex then
+	if string.sub(data,1,2)=='0x' and hex==true then
 		data=string.sub(data,3)
 		data=bin.fromhex(data)
-	elseif hex then
-		data=bin.fromhex(data)
-	end
-	if b64 then
-		data=bin.fromb64(data)
 	end
 	c.data=data
 	c.t='bin'
 	c.Stream=false
     return c
 end
-function bin.freshStream(file)
-	bin.new():tofile(file)
-	return bin.stream(file,false)
-end
 function bin.stream(file,l)
 	local c=bin.new()
-	if bin.streams[file]~=nil then
-		c.file=file
-		c.lock = l
-		c.workingfile=bin.streams[file].workingfile
-		c.Stream=true
-		return c
-	end
 	if bin.fileExist(file) then
 		c.file=file
 		c.lock = l
@@ -1236,7 +1000,6 @@ function bin.stream(file,l)
 		c.workingfile=io.open(file,'rb+')
 	end
 	c.Stream=true
-	bin.streams[file]=c
 	return c
 end
 function bin:streamwrite(d,n)
@@ -1250,15 +1013,9 @@ function bin:streamwrite(d,n)
 	end
 end
 function bin:streamread(a,b)
-	a=a-1
-	local loc=self.workingfile:seek('cur')
-	self.workingfile:seek('set',a)
-	local dat=self.workingfile:read(b-a)
-	self.workingfile:seek('set',loc)
-	return dat
-end
-function bin:streamreadNext(a)
-	return self.workingfile:read(a)
+	a=tonumber(a)
+	b=tostring(b)
+	return bin.load(self.file,a,b).data
 end
 function bin:close()
 	if self:canStreamWrite() then
@@ -1280,114 +1037,8 @@ end
 function bin:canStreamWrite()
 	return (self.Stream==true and self.lock==false)
 end
-function bin:getDataBuffer(a,b,filler)
-	if self:canStreamWrite() then
-		if not(a) and not(b) then
-			a=1
-			b=math.huge
-		elseif a and not(b) then
-			b=a
-			a=1
-			if self:getSize()<a then
-				stt="\0"
-				if filler then
-					stt=filler:sub(1,1)
-				end
-				self:streamwrite(string.rep(stt,b-1),1)
-			end
-		elseif self:getSize()<b then
-			stt="\0"
-			if filler then
-				stt=filler:sub(1,1)
-			end
-			self:streamwrite(string.rep(stt,b-a),a)
-		end
-		local me=self
-		local s=b-a
-		local ss=a
-		local max=b
-		local c={}
-		local mt={
-			__index=function(t,k,v) -- GOOD
-				if k<=s then
-					return string.byte(me:streamread(k+(ss-1),k+(ss-1)))
-				else
-					return
-				end
-			end,
-			__newindex=function(t,k,v) -- GOOD
-				k=k-1
-				if type(v)=="number" and s>=k then
-					me:streamwrite(string.char(v),k+(ss-1))
-				elseif type(v)=="string" and s>=k then
-					if #v~=1 then
-						t:fillBuffer(v,k+(ss))
-					elseif s>=k then
-						me:streamwrite(v,k+(ss-1))
-					else
-						print("Buffer Overflow!")
-					end
-				else
-					print("Warning Attempting to index outside defined range!")
-				end
-			end,
-			__tostring=function(t) -- GOOD
-				return t:getBuffer()
-			end
-		}
-		c.t="buffer"
-		c.dataS={}
-		function c:getBuffer(a,b) -- GOOD
-			if not(a) and not(b) then
-				local str={}
-				for i=ss,max do
-					table.insert(str,me:streamread(i+(ss-1),i+(ss-1)))
-				end
-				return table.concat(str)
-			else
-				return me:streamread(a+(ss-1),b+(ss-1))
-			end
-		end
-		function c:getData() -- GOOD
-			return self:getBuffer()
-		end
-		function c:getBufferTable() -- GOOD
-			local str={}
-			for i=ss,max do
-				table.insert(str,me:streamread(i+(ss-1),i+(ss-1)))
-			end
-			return str
-		end
-		function c:getBufferSize() -- GOOD
-			return #self:getBuffer()
-		end
-		function c:getlength() -- GOOD
-			return #self:getBuffer()
-		end
-		function c:tonumber(a,b) -- GOOD
-			return bin.new(self:getBuffer(a,b)):tonumber()
-		end
-		c.getSize=c.getlength
-		function c:fillBuffer(sg,a) -- GOOD
-			for i=#sg+(a-1),a,-1 do
-				if i<=max then
-					local ii=(a+#sg)-i
-					self[ii+(a-1)]=sg:sub(ii,ii)
-				else
-					return print("Buffer Overflow!")
-				end
-			end
-			return a,a+#sg-1
-		end
-		setmetatable(c,mt)
-		return c
-	else
-		error("Stream not opened for writing!")
-	end
-end
 function bin.load(file,s,r)
 	if not(s) or not(r) then
-	if type(file)~="string" then return bin.new() end
 		local f = io.open(file, 'rb')
 		local content = f:read('*a')
 		f:close()
@@ -1439,20 +1090,7 @@ function bin:getHash(n)
 	end
 	return table.concat(h,'')
 end
-function bin:getRandomHash(n)
-	if self:getlength()==0 then
-		return "NaN"
-	end
-	n=(n or 32)/2
-	local rand = randomGen:new(math.random(1,self:getlength()^2))
-	local h,g={},0
-	for i=1,n do
-		g=rand:randomInt(1,self:getlength())
-		table.insert(h,bin.tohex(self:sub(g,g)))
-	end
-	return table.concat(h,'')
-end
-function bin:newDataBuffer(s,def)
+function bin:newDataBuffer(s)
 	local c={}
 	local mt={
 		__index=function(t,k,v)
@@ -1467,28 +1105,17 @@ function bin:newDataBuffer(s,def)
 			end
 		end,
 		__newindex=function(t,k,v)
-			if type(v)=="number" and t.maxBuffer>=k then
-				t.dataS[k]=string.char(v)
-			elseif type(v)=="string" and t.maxBuffer>=k then
-				if #v~=1 then
-					t:fillBuffer(v,k)
-				elseif t.maxBuffer>=k then
-					t.dataS[k]=v
-				else
-					print("Buffer Overflow!")
-				end
-			end
+			t.dataS[k]=string.char(v)
 		end,
 		__tostring=function(t)
 			return t:getBuffer()
 		end
 	}
-	c.t="buffer"
 	c.dataS={}
 	if s then
 		if type(s)=="number" then
 			c.maxBuffer=s
-			s=string.rep(def or"\0",s)
+			s=string.rep("\0",s)
 		else
 			c.maxBuffer=math.huge
 		end
@@ -1505,9 +1132,6 @@ function bin:newDataBuffer(s,def)
 			return table.concat(self.dataS,"")
 		end
 	end
-	function c:getData()
-		return table.concat(self.dataS,"")
-	end
 	function c:getBufferTable()
 		return self.dataS
 	end
@@ -1519,9 +1143,6 @@ function bin:newDataBuffer(s,def)
 	end
 	function c:getlength()
 		return #self:getBuffer(a,b)
-	end
-	function c:tonumber(a,b)
-		return bin.new(self:getBuffer(a,b)):tonumber()
 	end
 	c.getSize=c.getlength
 	function c:fillBuffer(s,a)
@@ -2057,7 +1678,7 @@ function bin:addBlock(d,n,e)
 			temp.data=temp.data..'_EOF'
 			temp:flipbits()
 		else
-			temp=bin.new(bits.numToBytes(d,n))
+			temp=bits.new(d):tobytes()
 			if not n then
 				temp.data=temp.data..'_EOF'
 				temp:flipbits()
@@ -2369,11 +1990,7 @@ function bin.textToBinary(txt)
 	return bin.new(bits.new(txt:reverse()):getBin())
 end
 function bin:getData()
-	if self.Stream then
-		return self:sub(1,self:getSize())
-	else
-		return self.data
-	end
+	return self.data
 end
 function bin.getLuaVersion()
 	if type(jit)=="table" then
@@ -2645,63 +2262,6 @@ function bin.getIndexSize(tab)
 		size=size+#tab[i]+5
 	end
 	return size+5
-end
-function bin.gcd( m, n )
-    while n ~= 0 do
-        local q = m
-        m = n
-        n = q % n
-    end
-    return m
-end
-function bin.numToFraction(num)
-	num=num or error("Must enter a number!")
-	local n=#tostring(num)
-	num=num*(10^n)
-	local d=(10^n)
-	local g=bin.gcd(num,d)
-	return tostring(num/g).."/"..tostring(d/g),num/g,d/g
-end
-function bin.doubleToString(double)
-	local s=({[false]="-",[true]="+"})[double>=0]
-	double=math.abs(double)
-	local _,n,d=bin.numToFraction(double)
-	gfit=4
-	local a=bits.numToBytes(n,gfit,function(ref)
-		ref.fit=12 -- should be able to pack any number into that space
-		ref.num=string.rep("\0",12-#ref.num)..ref.num
-		if s=="-" then
-			s="_"
-		else
-			s="="
-		end
-		gfit=12
-	end)
-	local b=bits.numToBytes(d,gfit)
-	return s..a..b
-end
-function bin.stringToDouble(str)
-	local s=str:sub(1,1)
-	if #str~=9 and #str~=25 then
-		if s~="-" and s~="+" and s~="_" and s~="=" then
-			print(s)
-			error("Not a double encoded string")
-		end
-		error("Not a double encoded string")
-	end
-	local n,d
-	if s=="_" or s=="=" then
-		n,d=str:sub(2,13),str:sub(14)
-	else
-		n,d=str:sub(2,5),str:sub(6)
-	end
-	local n=bin.new(n):tonumber()
-	local d=bin.new(d):tonumber()
-	local num=n/d
-	if s=="-" or s=="_" then
-		num=-num
-	end
-	return num
 end
 --[[----------------------------------------
 VFS
@@ -2987,89 +2547,10 @@ end
 --[[----------------------------------------
 BITS
 ------------------------------------------]]
-function bits.lsh(value,shift)
-	return (value*(2^shift)) % 256
-end
-function bits.rsh(value,shift)
-	return math.floor(value/2^shift) % 256
-end
-function bits.bit(x,b)
-	return (x % 2^b - x % 2^(b-1) > 0)
-end
-function bits.lor(x,y)
-	result = 0
-	for p=1,8 do result = result + (((bits.bit(x,p) or bits.bit(y,p)) == true) and 2^(p-1) or 0) end
-	return result
-end
-function bits.newBitBuffer(n)
-	--
-end
-function bits.newConverter(bitsIn,bitsOut)
-	local c={}
-	--
-end
-bits.ref={}
-function bits.newByte(d)
-	local c={}
-	if type(d)=="string" then
-		if #d>1 or #d<1 then
-			error("A byte must be one character!")
-		else
-			c.data=string.byte(d)
-		end
-	elseif type(d)=="number" then
-		if d>255 or d<0 then
-			error("A byte must be between 0 and 255!")
-		else
-			c.data=d
-		end
-	else
-		error("cannot use type "..type(d).." as an argument! Takes only strings or numbers!")
-	end
-	c.__index=function(self,k)
-		if k>=0 and k<9 then
-			if self.data==0 then
-				return 0
-			elseif self.data==255 then
-				return 1
-			else
-				return bits.ref[self.data][k]
-			end
-		end
-	end
-	c.__tostring=function(self)
-		return bits.ref[tostring(self.data)]
-	end
-	setmetatable(c,c)
-	return c
-end
-function bits.newByteArray(s)
-	local c={}
-	if type(s)~="string" then
-		error("Must be a string type or bin/buffer type")
-	elseif type(s)=="table" then
-		if s.t=="sink" or s.t=="buffer" or s.t=="bin" then
-			local data=s:getData()
-			for i=1,#data do
-				c[#c+1]=bits.newByte(data:sub(i,i))
-			end
-		else
-			error("Must be a string type or bin/buffer type")
-		end
-	else
-		for i=1,#s do
-			c[#c+1]=bits.newByte(s:sub(i,i))
-		end
-	end
-	return c
-end
-function bits.new(n,s)
+function bits.new(n)
 	if type(n)=='string' then
 		local t=tonumber(n,2)
-		if t and #n<8 and not(s) then
-			t=nil
-		end
-		if not(t) then
+		if not t then
 			t={}
 			for i=#n,1,-1 do
 				table.insert(t,bits:conv(string.byte(n,i)))
@@ -3099,26 +2580,13 @@ function bits.new(n,s)
 	setmetatable({__tostring=function(self) return self.data end},temp)
 	return temp
 end
-for i=0,255 do
-	local d=bits.new(i).data
-	bits.ref[i]={d:match("(%d)(%d)(%d)(%d)(%d)(%d)(%d)(%d)")}
-	bits.ref[tostring(i)]=d
-	bits.ref[d]=i
-	bits.ref["\255"..string.char(i)]=d
-end
-function bits.numToBytes(n,fit,func)
+function bits.numToBytes(n,fit)
 	local num=bits.new(n):toSbytes()
 	num=bin.endianflop(num)
-	local ref={["num"]=num,["fit"]=fit}
 	if fit then
 		if fit<#num then
-			if func then
-				print("Warning: attempting to store a number that takes up more space than allotted! Using provided method!")
-				func(ref)
-			else
-				print("Warning: attempting to store a number that takes up more space than allotted!")
-			end
-			return ref.num:sub(1,ref.fit)
+			print("Warning: attempting to store a number that takes up more space than allotted!")
+			return num:sub(1,fit)
 		elseif fit==#num then
 			return num
 		else

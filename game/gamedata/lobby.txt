@@ -1,0 +1,57 @@
+//SND_ELEVATOR_BG
+//SND_ELEVATOR_OPEN_CLOSE
+//SND_ROPE_CRACKING
+//SND_FOOTSTEPS
+[LOBBY]{
+	BG("images/elevator-lobby.jpg")
+	"Abby: Oh no I'm running late!"
+	"Abby: I hope I make my interview"
+	playAudio(SND_ELEVATOR_OPEN_CLOSE)
+	"Abby: Great someone just walked out of the elevator"
+	playSong(SND_FOOTSTEPS)
+	"Abby: lets hope i make it"
+	"Abby: Alright, let me get it this thing"
+	BG("images/elevator.jpg")
+	"Abby: ok 10th floor it is"
+	playAudio(SND_ELEVATOR_OPEN_CLOSE)
+	playSongLooped(SND_ELEVATOR_BG)
+	"Abby: Hurry up... I am going to be so late"
+	"Abby: Wait! What was that?"
+	playAudio(SND_ROPE_CRACKING)
+	"That doesn't sound good"
+	::choose::
+	"What should I do"<
+		"Cry" JUMP("CRY")
+		"Call for help" JUMP("HELP")
+		"Wait it out" JUMP("WAIT")
+	>
+}
+[CRY]{
+	cry=true // used for future decisions
+	"Abby: crying is nice, but it won't help any"
+	GOTOE("choose")
+}
+[HELP]{
+	help=true // used for future decisions
+	"Abby: Ok let me press this call button"
+	"..."
+	"Employee: Hello what is going on?"
+	"Abby: There is an issue with the elevator! I hear a cracking sound"
+	"Employee: Hmm... Our sensors say everything is ok"
+	"Abby: Oh alright... Maybe I am a bit nervous about this interview"
+	"Employee: No worries, and good luck"
+	"Abby: Thanks"
+	JUMP("NOTHING")
+}
+[WAIT]{
+	wait=true // used for future decisions
+	"Abby: I am sure its nothing"
+	JUMP("NOTHING")
+}
+[NOTHING]{
+	"RYAN: And it all leads to here eventually"
+	"What to do try other options"<
+		"Yes" GOTOE("choose")
+		"I had enough" QUIT()
+	>
+}

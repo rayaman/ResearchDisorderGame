@@ -28,7 +28,7 @@ function gui:newTextBox(t,name, x, y, w, h, sx ,sy ,sw ,sh)
 	c.mark=nil
 	c.arrowkeys=false
 	c.funcF={function()
-		love.keyboard.setTextInput(true)
+		love.keyboard.setTextInput(true,0,200,400,200)
 	end}
 	c.cooldown=false
 	c.cooldown2=false

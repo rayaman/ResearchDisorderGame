@@ -14,7 +14,7 @@ function gui:LoadInterface(file)
 	if love.filesystem.exists(file..add) then
     a,b=pcall(love.filesystem.load(file..add))
 		if a then
-			print("Loaded: "..file)
+			--print("Loaded: "..file)
 		else
 			print("Error loading file: "..file)
       print(a,b)
@@ -34,7 +34,6 @@ function gui.LoadAll(dir)
 end
 -- Start Of Load
 
---gui.LoadAll("GuiManager/LibCore")
 gui.LoadAll("GuiManager/Core")
 gui.LoadAll("GuiManager/Image-Animation")
 gui.LoadAll("GuiManager/Frame")
@@ -42,8 +41,7 @@ gui.LoadAll("GuiManager/Item")
 gui.LoadAll("GuiManager/Misc")
 gui.LoadAll("GuiManager/Text")
 gui.LoadAll("GuiManager/Drawing")
-gui.LoadAll("GuiManager/Combos")
---gui.LoadAll("GuiManager/WIP")
+
 multi.boost=2
 
 -- End of Load
