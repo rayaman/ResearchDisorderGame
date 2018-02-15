@@ -20,11 +20,7 @@ parseManager:define{
 			inputBox.message.text=msg
 			inputBox.Visible=true
 			go.Visible=false
-			self.handle:Pause()
-			while _inputvar==nil do
-				multi:lManager()
-			end
-			self.handle:Resume()
+			thread.hold(function() return _inputvar~=nil end)
 			local i=_inputvar
 			_inputvar=nil
 			inputBox.Visible=false
@@ -59,9 +55,8 @@ parseManager:define{
 		end
     end,
     sleep=function(self,n)
-        local num=n
-        self.handle:hold(num)
-    end,
+		thread.sleep(n)
+	end,
     fadeSong=function(self,item)
         self.handle:Pause()
         local handle=self:varExists(item)
@@ -142,12 +137,10 @@ parseManager:define{
         item:Reset()
     end,
     setImage=function(self,item,path)
-		smartPrint(item)
         item:SetImage(path)
     end,
     setText=function(self,item,text)
 		if type(item)=="string" then
-			print(actor)
 			self:pushError("item must be a gui object!")
 		end
         item.text=text
@@ -188,11 +181,6 @@ parseManager:define{
 			local ThreadTest=parseManager:load(blocklink.chunks[block].path)
 			ThreadTest.mainENV=blocklink.mainENV
 			ThreadTest.handle=loop
-			ThreadTest:define{
-				sleep=function(self,n)
-					thread.sleep(n)
-				end
-			}
 			local t=ThreadTest:next(block)
 			while true do
 				if t.Type=="text" then
@@ -219,7 +207,6 @@ core.chatFrame.textHolder.Visibility=0
 core.chatFrame.textHolder.text=""
 core.chatFrame.textHolder.TextFormat="left"
 test=parseManager:load("init.txt")
-table.print(test)
 --~ print("DUMP:")
 dump=test:dump()
 print(dump)
@@ -228,37 +215,39 @@ test.mainENV["gui"]=workspace
 test.mainENV["menu"]=top
 go=core.chatFrame.textHolder:newImageButton("images/arrow.png",-25,-25,20,20,1,1)
 go:OnReleased(function(b,self)
-   dialogeHandler:Resume()
+   ready=true
 end)
-dialogeHandler=multi:newLoop(function(self,ti)
-	t=test:next()
-	if t.Type=="text" then
-		core.chatFrame.textHolder.text=t.text
-		self:Pause()
-	elseif t.Type=="choice" then
-		go.Visible=false
-		local choiceframe=gui:newFrame("",0,0,300,(#t+1)*40-10)
-		choiceframe:newTextLabel(t.prompt,0,0,0,40,0,0,1).Color=Color.light_blue
-		for i=1,#t[1] do
-			local choice=choiceframe:newTextButton(t[1][i],0,i*40,0,40,0,0,1)
-			choice.Color=Color.Darken(Color.saddle_brown,.15)
-			choice.index=i
-			choice:OnReleased(function(b,self)
-				choicemade=self.index
-			end)
+--dialogeHandler=multi:newLoop(function(self,ti)
+ready=false
+multi:newThread("TextHandler",function()
+	while true do
+		t=test:next()
+		if t.Type=="text" then
+			core.chatFrame.textHolder.text=t.text
+			ready=false
+			thread.hold(function() return ready==true end)
+		elseif t.Type=="choice" then
+			go.Visible=false
+			local choiceframe=gui:newFrame("",0,0,300,(#t+1)*40-10)
+			choiceframe:newTextLabel(t.prompt,0,0,0,40,0,0,1).Color=Color.light_blue
+			for i=1,#t[1] do
+				local choice=choiceframe:newTextButton(t[1][i],0,i*40,0,40,0,0,1)
+				choice.Color=Color.Darken(Color.saddle_brown,.15)
+				choice.index=i
+				choice:OnReleased(function(b,self)
+					choicemade=self.index
+				end)
+			end
+			choiceframe:centerX()
+			choiceframe:centerY()
+			thread.hold(function() return choicemade~=nil end)
+			go.Visible=true
+			choiceframe:Destroy()
+			local cm=choicemade
+			choicemade=nil
+			t=test:next(nil,cm)
 		end
-		choiceframe:centerX()
-		choiceframe:centerY()
-		self:Pause()
-		while choicemade==nil do
-			multi:lManager()
-		end
-		self:Resume()
-		go.Visible=true
-		choiceframe:Destroy()
-		local cm=choicemade
-		choicemade=nil
-		t=test:next(nil,cm)
+		thread.sleep(.001)
 	end
 end)
 test.handle=dialogeHandler
