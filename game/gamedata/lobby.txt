@@ -3,6 +3,8 @@
 //SND_ROPE_CRACKING
 //SND_FOOTSTEPS
 [LOBBY]{
+	name=getInput("What is your name: ")
+	"Yo $name$ enjoy the game"
 	BG("images/elevator-lobby.jpg")
 	"Abby: Oh no I'm running late!"
 	"Abby: I hope I make my interview"

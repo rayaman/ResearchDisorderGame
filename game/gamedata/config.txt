@@ -1,6 +1,6 @@
 LOAD gamedata/lobby.txt
 [CONFIG]{
-	//newThread("THREAD") // Starts a thread that handles events and stuff... Just throw this in and things flow nicely
+	newThread("THREAD") // Starts a thread that handles events and stuff... Just throw this in and things flow nicely
 	SND_ELEVATOR_BG=loadAudio("audio/elevator.ogg")
 	SND_ELEVATOR_OPEN_CLOSE=loadAudio("audio/elevator_open_close.mp3")
 	SND_ROPE_CRACKING=loadAudio("audio/rope_cracking.mp3")
