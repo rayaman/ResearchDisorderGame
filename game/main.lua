@@ -230,6 +230,9 @@ go=core.chatFrame.textHolder:newImageButton("images/arrow.png",-25,-25,20,20,1,1
 go:OnReleased(function(b,self)
    dialogeHandler:Resume()
 end)
+multi:newLoop(function()
+	love.timer.sleep(.005)
+end)
 dialogeHandler=multi:newLoop(function(self,ti)
 	t=test:next()
 	if t.Type=="text" then
