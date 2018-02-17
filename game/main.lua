@@ -1,8 +1,6 @@
---package.path="/?/init.lua;"..package.path
 require("Libs/Library")
---~ require("Libs/Utils")
 require("bin")
-require("multi.compat.love2d") -- for use with the love2d engine
+require("multi.compat.love2d")
 require("parseManager")
 require("Libs/lovebind")
 require("GuiManager")
@@ -31,9 +29,6 @@ parseManager:define{
     loadAudio=function(self,path)
         return love.audio.newSource(path)
     end,
-    loadSong=function(self,path)
-        return love.audio.newSource(path)
-    end,
     playSongLooped=function(self,item)
         item:setLooping(true)
         item:play()
@@ -42,15 +37,7 @@ parseManager:define{
         item:play()
 		if n then
 			multi:newAlarm(n):OnRing(function()
-				item:stop()
-			end)
-		end
-    end,
-    playSong=function(self,item,n)
-        item:play()
-		if n then
-			multi:newAlarm(n):OnRing(function()
-				item:stop()
+				item:pause()
 			end)
 		end
     end,
@@ -70,13 +57,6 @@ parseManager:define{
         self.handle:Resume()
     end,
     stopAudio=function(self,item)
-        item:stop()
-    end,
-    stopSong=function(self,item)
-        if self:varExists(item)==nil then
-            love.audio.stop()
-            return
-        end
         item:stop()
     end,
     pauseAudio=function(self,item)
@@ -101,7 +81,6 @@ parseManager:define{
         if obj.DPI>=2 then
           obj.DPI=obj.DPI-1
         end
-		print("OBJECT: "..tostring(obj))
         return obj
     end,
     makeObject=function(self,link,x,y,w,h,sx,sy,sw,sh)
@@ -140,7 +119,7 @@ parseManager:define{
         item:SetImage(path)
     end,
     setText=function(self,item,text)
-		if type(item)=="string" then
+		if type(item)~="table" then
 			self:pushError("item must be a gui object!")
 		end
         item.text=text
@@ -174,7 +153,7 @@ parseManager:define{
         item:Destroy()
     end,
 	loadImage=function(self,path)
-		--
+		return love.graphics.newImage(path)
 	end,
     newThread=function(blocklink,block)
 		multi:newThread(block.." [Thread]",function()
@@ -194,7 +173,7 @@ parseManager:define{
 	end,
 }
 gui.enableAutoWindowScaling(true)
-core=gui:newImageLabel(nil,0,0,0,0,0,0,1,1)--gui:newFullImageLabel("fire.jpg","BG")
+core=gui:newImageLabel(nil,0,0,0,0,0,0,1,1)
 workspace=core:newFullFrame()
 top=gui:newFrame("",0,0,0,0,0,0,1,1)
 workspace.Visibility=0
@@ -207,7 +186,6 @@ core.chatFrame.textHolder.Visibility=0
 core.chatFrame.textHolder.text=""
 core.chatFrame.textHolder.TextFormat="left"
 test=parseManager:load("init.txt")
---~ print("DUMP:")
 dump=test:dump()
 print(dump)
 bin.new(dump):tofile("Dump.dat")
@@ -297,4 +275,3 @@ inputBox.input.ClipDescendants=true
 inputBox:centerX()
 inputBox:centerY()
 inputBox.Visible=false
---~ t=test:next() -- lets start this!
