@@ -37,19 +37,62 @@ function multi:newSystemThreadedQueue(name) -- in love2d this will spawn a chann
 			function c:init() -- create an init function so we can mimic on bith love2d and lanes
 				self.chan=love.thread.getChannel(self.name) -- create channel by the name self.name
 				function self:push(v) -- push to the channel
-					self.chan:push({type(v),resolveData(v)})
+					local tab
+					if type(v)=="table" then
+						tab = {}
+						for i,c in pairs(v) do
+							if type(c)=="function" then
+								tab[i]="\1"..string.dump(c)
+							else
+								tab[i]=c
+							end
+						end
+						self.chan:push(tab)
+					else
+						self.chan:push(c)
+					end
 				end
 				function self:pop() -- pop from the channel
-					local tab=self.chan:pop()
-					--print(tab)
-					if not tab then return end
-					return resolveType(tab[1],tab[2])
+					local v=self.chan:pop()
+					if not v then return end
+					if type(v)=="table" then
+						tab = {}
+						for i,c in pairs(v) do
+							if type(c)=="string" then
+								if c:sub(1,1)=="\1" then
+									tab[i]=loadstring(c:sub(2,-1))
+								else
+									tab[i]=c
+								end
+							else
+								tab[i]=c
+							end
+						end
+						return tab
+					else
+						return self.chan:pop()
+					end
 				end
 				function self:peek()
-					local tab=self.chan:peek()
-					--print(tab)
-					if not tab then return end
-					return resolveType(tab[1],tab[2])
+					local v=self.chan:peek()
+					if not v then return end
+					if type(v)=="table" then
+						tab = {}
+						for i,c in pairs(v) do
+							if type(c)=="string" then
+								if c:sub(1,1)=="\1" then
+									tab[i]=loadstring(c:sub(2,-1))
+								else
+									tab[i]=c
+								end
+							else
+								tab[i]=c
+							end
+						end
+						return tab
+					else
+						return self.chan:pop()
+					end
 				end
 				GLOBAL[self.name]=self -- send the object to the thread through the global interface
 				return self -- return the object
@@ -221,6 +264,7 @@ function multi:newSystemThreadedJobQueue(numOfCores)
 	function c:pushJob(name,...)
 		self.queueOUT:push({self.jobnum,name,...})
 		self.jobnum=self.jobnum+1
+		return self.jobnum-1
 	end
 	local GLOBAL=multi.integration.GLOBAL -- set up locals incase we are using lanes
 	local sThread=multi.integration.THREAD -- set up locals incase we are using lanes

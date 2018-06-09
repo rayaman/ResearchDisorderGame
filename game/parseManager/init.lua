@@ -40,6 +40,9 @@ end
 function parseManager:defualtENV()
 	self:setENV(self.mainENV)
 end
+function parseManager:exposeNamespace(name,ref)
+	self.mainENV[name]=ref
+end
 function parseManager:load(path,c)
 	local c = c
 	if not c then
@@ -75,7 +78,6 @@ function parseManager:load(path,c)
 	file.data=file.data:gsub("\2","//")
 	file.data=file.data:gsub("\t","")
 	file:trim()
-	print(file.data)
 	for fn in file:gmatch("LOAD (.-)\n") do
 		debug("L",fn)
 		self:load(fn,c)
@@ -110,6 +112,15 @@ function parseManager:load(path,c)
 	end
 	--c.chunks=readonlytable(c.chunks)
 	return c
+end
+function parseManager:extractState()
+	return {name=self.currentChunk.name,pos = self.currentChunk.pos,variables = self.mainENV,cc = self.currentENV}
+end
+function parseManager:injectState(tbl)
+	self.chunks[tbl.name].pos=tbl.pos
+	self.currentChunk=self.chunks[tbl.name]
+	self.mainENV = tbl.variables
+	self.currentENV = tbl.cc
 end
 function parseManager.split(s,pat)
 	local pat=pat or ","
@@ -217,7 +228,7 @@ function parseManager:dump()
 					met[#met+1]=v[k][i][2].Func
 					args[#args+1]=concat(v[k][i][2].args," ")
 				end
-				str=str.."\tCHOICE["..v[k].prompt.."]$C<"..concat(opt,", ")..">$F<"..concat(met,", ")..">$A<"..concat(args,", ")..">"
+				str=str.."\tCHOICE["..v[k].prompt.."]$C<"..concat(opt,", ")..">$F<"..concat(met,", ")..">$A<"..concat(args,", ")..">\n"
 			elseif v[k].Type=="text" then
 				str=str.."\tDISP_MSG \""..v[k].text.."\"\n"
 			elseif v[k].Type=="assign" then
@@ -335,6 +346,7 @@ function parseManager:compileAssign(assignA,assignB,name)
 				assign.vals[#assign.vals+1]={}
 			else
 				assign.vals[#assign.vals+1]=pieceList(listB[k]:sub(2,-2),self,name)
+				table.print(assign.vals[#assign.vals])
 			end
 		elseif listB[k]:match("[%w_]-%[.-%]") then
 			local dict,sym=listB[k]:match("([%w_]-)%[(.-)%]")
@@ -356,7 +368,7 @@ function parseManager:compileAssign(assignA,assignB,name)
 			assign.vals[#assign.vals+1]=false
 		elseif listB[k]:match("[%w_]+")==listB[k] then
 			assign.vals[#assign.vals+1]="\1"..listB[k]
-		elseif listB[k]:match("[_%w%+%-/%*%^%(%)%%]+") then
+		elseif listB[k]:match("[_%w%+%-/%*%^%(%)%%]+")==listB[k] then
 			mathTest=true
 			self:compileExpr(listA[k],listB[k],name)
 		else
@@ -364,8 +376,11 @@ function parseManager:compileAssign(assignA,assignB,name)
 		end
 		if not mathTest then
 			assign.vars[#assign.vars+1]=pieceAssign(listA[k],self,name)
+		else
+			print("FUCK!!!!!!!!!!!")
 		end
 	end
+	table.print(assign)
 	table.insert(self.chunks[name],assign)
 end
 function parseManager:compileCondition(condition,iff,elsee,name)
@@ -652,7 +667,7 @@ function parseManager:compile(name,ctype,data)
 	for i=1,#data do
 		data[i]=trim1(data[i])
 		if data[i]~="" then
-			if data[i]:match(".-<%s*") then
+			if data[i]:match(".-\"<%s*") then
 				choiceBlock=true
 				choice={}
 				j=0
@@ -669,19 +684,21 @@ function parseManager:compile(name,ctype,data)
 						j=1
 					else
 						local a,b=dat:match("\"(.-)\"%s*(.+)")
-						local f,ag=b:match("^([%w_]+)%s*%((.*)%)")
-						if ag~="" then
-							choice[#choice+1]={a,{
-								Type="fwor",
-								Func=f,
-								args=pieceList(ag,self,name),
-							}}
-						else
-							choice[#choice+1]={a,{
-								Type="fwor",
-								Func=f,
-								args={},
-							}}
+						if b then
+							local f,ag=b:match("^([%w_]+)%s*%((.*)%)")
+							if ag~="" then
+								choice[#choice+1]={a,{
+									Type="fwor",
+									Func=f,
+									args=pieceList(ag,self,name),
+								}}
+							else
+								choice[#choice+1]={a,{
+									Type="fwor",
+									Func=f,
+									args={},
+								}}
+							end
 						end
 					end
 				end
@@ -953,10 +970,10 @@ function parseManager:next(block,choice)
 		self.choiceData=data
 		local CList={}
 		for i=1,#data do
-			CList[#CList+1]=data[i][1]
+			CList[#CList+1]=self:parseHeader(data[i][1])
 		end
 		self.lastCall=nil
-		return {Type="choice",prompt=data.prompt,CList}
+		return {Type="choice",prompt=self:parseHeader(data.prompt),CList}
 	elseif data.Type=="assign" then
 		self:pairAssign(data.vars,data.vals)
 		self.lastCall=nil

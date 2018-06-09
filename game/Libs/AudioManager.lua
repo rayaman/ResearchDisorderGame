@@ -1,11 +1,12 @@
 audio = {}
 audio.__index = audio
 function audio:new(f,t)
+	t=t or "stream"
 	local obj={}
 	setmetatable(obj, audio)
 	obj.source=love.audio.newSource(f,t)
 	obj.f=f
-	obj.t=t or "stream"
+	obj.t=t
 	obj.endEvent=multi:newLoop()
 	obj.endEvent.Pare=obj
 	obj.wasPlaying=false
@@ -13,7 +14,7 @@ function audio:new(f,t)
 	obj.func2={}
 	obj.func3={}
 	obj.func4={}
-	obj.endEvent:OnLoop(function(time,loop)
+	obj.endEvent:OnLoop(function(loop,time)
 		if not(loop.Pare:isPlaying()) and loop.Pare.wasPlaying==true and not(loop.Pare:isPaused()) then
 			for i=1,#loop.Pare.func do
 				loop.Pare:stop()
@@ -59,7 +60,7 @@ function audio:pause()
 	self.source:pause()
 end
 function audio:resume()
-	self.source:resume()
+	self.source:play()
 end
 function audio:rewind()
 	self.source:rewind()
@@ -105,7 +106,7 @@ function audio:isPlaying()
 	return self.source:isPlaying()
 end
 function audio:isPaused()
-	return self.source:isPaused()
+	return not self.source:isPlaying()
 end
 function audio:isStopped()
 	return self.source:isStopped()

@@ -1,12 +1,10 @@
 LOAD gamedata/lobby.txt
 [CONFIG]{
-	newThread("THREAD") // Starts a thread that handles events and stuff... Just throw this in and things flow nicely
-	SND_ELEVATOR_BG=loadAudio("audio/elevator.ogg")
-	SND_ELEVATOR_OPEN_CLOSE=loadAudio("audio/elevator_open_close.mp3")
-	SND_ROPE_CRACKING=loadAudio("audio/rope_cracking.mp3")
-	SND_FOOTSTEPS=loadAudio("audio/footsteps.ogg")
+	Menu(true)
+	//newThread("THREAD") // Starts a thread that handles events and stuff... Just throw this in and things flow nicely
 	JUMP("LOBBY") // Lets start the game Jumping to block lobby in lobby.txt
 }
+//Internal threads can now be used to handled to manage hooks and events so there is no longer to usse this type of thread handling
 [THREAD]{
 	::threadloop::
 		sleep(.001) // No need to put this in, but it is used to help show you whats going on

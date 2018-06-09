@@ -2,58 +2,731 @@
 //SND_ELEVATOR_OPEN_CLOSE
 //SND_ROPE_CRACKING
 //SND_FOOTSTEPS
+//ENABLE debugging
+//Introduction of Game with Story 
+
 [LOBBY]{
-	name=getInput("What is your name: ")
-	"Yo $name$ enjoy the game"
-	BG("images/elevator-lobby.jpg")
-	"Abby: Oh no I'm running late!"
-	"Abby: I hope I make my interview"
-	playAudio(SND_ELEVATOR_OPEN_CLOSE)
-	"Abby: Great someone just walked out of the elevator"
-	playSong(SND_FOOTSTEPS)
-	"Abby: lets hope i make it"
-	"Abby: Alright, let me get it this thing"
-	BG("images/elevator.jpg")
-	"Abby: ok 10th floor it is"
-	playAudio(SND_ELEVATOR_OPEN_CLOSE)
-	playSongLooped(SND_ELEVATOR_BG)
-	"Abby: Hurry up... I am going to be so late"
-	"Abby: Wait! What was that?"
-	playAudio(SND_ROPE_CRACKING)
-	"That doesn't sound good"
-	::choose::
-	"What should I do"<
-		"Cry" JUMP("CRY")
-		"Call for help" JUMP("HELP")
-		"Wait it out" JUMP("WAIT")
+	ClassBG(true)
+	played_gameschool = false
+	eastereggSchool = false
+	BG("images/classroom.jpg")
+	user=getInput("Enter your name:")
+	"Ms. Render: Well students, let's end this class day with a story"
+	"Froggy's Adventures By John Wisely"
+	"Froggy's Adventures: Once upon a time there was a small pond, deep in the woods."
+	"It was filled with fresh water and shaped like a perfect circle."
+	"There were lily pads, grass, and endless bugs to eat."
+	"This pond was home to a small frog named Harry."
+	"He lived in this pond for his whole life and is a very happy frog." 
+	"Everyday is the same for Harry."
+	"He wakes up at 7:05 AM when the sun is high in the sky and gets ready for the day."
+	"He eats some dragonflies that buzz around his home and takes a splash in the water."
+	"Harry leaves his pond at 8:15 to meet his friend Becky."
+	"Becky is a woodpecker who lives on a crooked tree deep in the woods."
+	"She likes to sing every day and peck at his home."
+	"Harry finds Becky a little strange but he is happy to be his friend."
+	"As Harry meets Becky, Becky calls down and says "Hey there Harry, how are you today?""
+	"Harry replies "I am well, just started my day""
+	""Could you please eat these worms, they are filling up my holes" asks Becky"
+	""I would be happy to" says Harry"
+	"It was 11:24 and just in time for lunch."
+	"There were worms everywhere and Harry understood Becky's problem"
+	"Harry hopped from branch to branch, eating every worm in sight"
+	"When he was done, Becky was smiling from ear to ear and thanked Harry again"
+	"Harry said goodbye and left to meet his other neighbor at 1:45PM"
+	"His other neighbor Susan, is just as strange as Becky"
+	"She is a squirrel who loves to collect nuts that fall from the trees"
+	"Nuts are really gross to eat, bugs are much tastier"
+	"While hopping down the path, Harry looks around the area"
+	"Many twigs have broken from the trees."
+	"The sun has set halfway across the sky and the clouds are fluffy and white."
+	"Harry is glad to live in these woods because they never change and are beautiful"
+	"Its 3:52 and Harry finally reaches Susan, but sees she is upset"
+	""What is wrong Susan, why are you sad" asks Harry"
+	""One of my nuts fell down this well, and I can't reach it with my arms" replies Susan"
+	"Harry looks down the well and spots the nut, it lays on a leaf three feet down."
+	"After thinking about it, Harry comes up with an idea"
+	""What if I extend my tongue to catch the nut for you?" suggests Harry"
+	""That's an amazing idea!" responds Susan"
+	"Harry puts his head in the well and aims for the leaf."
+	"He misses the first time but tries again and succeeds."
+	"Susan jumps for joy and is very happy to have her nut back"
+	"Thank you so much Harry, you are the best frog in the world!"
+	""I am happy to help you Susan" replies Harry"
+	"As Susan runs away to add to her nut collection, Harry realizes how late it is."
+	"Its already 5:30 and he begins his journey home"
+	"He hops back to the pond as the sky turns dark"
+	"Harry dips into the pond and eats a few more flies for dinner,"
+	"Harry falls asleep at 9:15 with a smile on his face"
+	"Ms. Render: Well students that is the end of the story. Does anyone have any questions before we end school today?"<
+		"I have a question!" GOTO("YES")
+		"Say nothing" GOTO("NO")
 	>
+	::YES::
+		asked_question = true
+		"Yes $user$"
+		"$user$: I have a question about the frog, why does the author describe him as happy?"
+		"Ms. Render: Well it was how Harry was feeling throughout the book. What makes you happy $user$?"
+		"$user$: I am not sure, the days are just passing time. What is there to be happy or sad about?" 
+		"Ms. Render: That can be the question you research for the essay that is due next week. Why are people happy or sad? You can go to different shops around town and try to figure out what the emotions mean." 
+		GOTO("overhere")
+	::NO::
+		asked_question = false
+		"Ms. Render: No questions? Ok Well Think about what you all can do for your essay"
+		//You are talking to yourself so do some image thing here to indicate that
+		"$user$: I could probably do an essay on what there to be happy or sad about?"
+		"Ms. Render: With that lets end class. Have a nice day everyone."
+		GOTO("prechoice")
+	::overhere:: 
+		"Ms. Render: With that lets end class. Have a nice day everyone."
+		"$user$: I don't understand how the frog could be happy"
+		"I should probably do what Ms. Render said and research emotions"
+		"I can use my notebook to record everything I find"
+	::prechoice::
+		"$user$: I can go to these different places, maybe one will give me a clue on whay I can do..."
+	::choose::
+		"Where should I go?"<
+			"Go to my house" JUMP("HOUSE")
+			"Go to the school" JUMP("SCHOOL")
+			"Go to the park" JUMP("PARK")
+			"Go to the aquarium" JUMP("AQUARIUM")
+			"Go to the store" JUMP("STORE")
+		>
 }
-[CRY]{
-	cry=true // used for future decisions
-	"Abby: crying is nice, but it won't help any"
+[HOUSE] {
+	BG("images/home.png")
+	BGStop()
+	HouseBG(true)
+	house = true
+	"You enter the door into your house. You see your mom in the living room and walk towards her."
+	"Mom: Hello sweetie, how was your day?"
+	"$user$: It was the same. Ms. Render read an odd book today."
+	"Mom: What was the book about?"
+	"$user$: It was about a frog that was happy. But I don't understand how a frog could be happy. I think it will be my essay topic because we are suppose to figure out a situation we don't understand."
+	"Mom: Well happiness is an emotion and many people experience it. It's a sign that they are feeling good."
+	"$user$:  But a frog isn't a person. How could its emotion change?"
+	"Mom: They change because of things that happen through the day. It is not only people that have emotions, which is why the story is about a frog."
+	"$user$: I still don't understand."
+	"Mom: Hmmm, How about we do something different."
+	"$user$: What do you mean?"
+	"Mom: Lets play a little game. I will show you different pictures and you will try to figure out which emotion is being shown."
+	"$user$: How would this help me?"
+	"Mom: If you can recognize the different emotions then that would be the first step into understanding a specific emotion."
+	"$user$: That does make sense. All right let's play."
+	MINIGAME_HOUSE()
 	GOTOE("choose")
 }
-[HELP]{
-	help=true // used for future decisions
-	"Abby: Ok let me press this call button"
-	"..."
-	"Employee: Hello what is going on?"
-	"Abby: There is an issue with the elevator! I hear a cracking sound"
-	"Employee: Hmm... Our sensors say everything is ok"
-	"Abby: Oh alright... Maybe I am a bit nervous about this interview"
-	"Employee: No worries, and good luck"
-	"Abby: Thanks"
-	JUMP("NOTHING")
+
+[SCHOOL]{
+	BG("images/classroomafterhours.png")
+	BGStop()
+	SchoolBG(true)
+	school = true
+	if eastereggSchool==true then GOTO("school")|GOTO("notschool")
+	::school::
+		"$user$: I have already went to the school and did all I could here. I think it is a better Idea to try somewhere else"<
+			"Go to my house" JUMP("HOUSE")
+			"Go to the park" JUMP("PARK")
+			"Go to the aquarium" JUMP("AQUARIUM")
+			"Go to the store" JUMP("STORE")
+		>
+	::notschool::
+		"You walk into the school and see the hallways empty. It is after school so only the teachers are left. You walk into your classroom and see Ms. Render sitting at her desk."
+		"$user$: Hello Ms.Render I am back in class."
+		if played_gameschool==true then GOTO("played")|GOTO("notplayed")
+	::notplayed::
+	if asked_question==true then GOTO("asked")|GOTO("notasked")
+	::asked::
+		"Ms.Render: Good afternoon $user$, is there something you need? I noticed you had a question about emotions eariler."
+		"$user$: Yes I did, and I was wondering if you could help me a bit more with this research"
+		"Ms. Render: Your choice was very interesting and unique. What issue are you having with your reasearch?"
+		"$user$: Yes I am. I am trying to gather all the information I can about emotions and interacting with people."
+		"Ms.Render: I think you should go to a few places you have been before and ask people you know how they are feeling. That would give you a range of data to work with and hopefully help you find the solution to your question." 
+		GOTO("continue")
+	::notasked::
+		"Ms.Render: Good afternoon $user$, is there something you need."
+		"$user$: Yes, I have a question about the essay you assigned."
+		"Ms. Render: What did you choose your report to be about?"
+		"$user$: After listening to the book I couldn't understand the frog and why he was happy. Because the essay topic requires you to study something you don't understand and research it, I chose to figure out why the frog is happy."
+		"Ms. Render: That is a very interesting and unique choice. Are you having a problem with the research?"
+		"$user$: Yes I am. I am trying to gather all the information I can about emotions and interacting with people."
+		"Ms.Render:  I recommend you going to a few places you have been before and asking people you know how they are feeling. That would give you a range of data to work with and find the solution to your question." 
+	::continue::
+		"$user$: That would give me a lot of information to work with. But I don't know how to respond to people when they say how they are feeling." 
+		"Ms. Render : How about we do some practice. We will go through five rounds. Each round I will show you a a sentence. You will have to complete the sentence that follows. You pass if you complete all the rounds. How does that sound?" 
+		"$user$: That would be helpful. Let's start."
+		JUMP("SCHOOLGAME")
+	::played::
+		"Ms. Render: Hello again $user$, do you need some more assistance?"<
+			"Yes, I would like to play this game again." JUMP("SCHOOLGAME")
+			"No, I was wondering if others around me may have the same issue as me?" GOTO("no")
+		>
+	::no::
+		eastereggSchool = true
+		"Ms. Render: Let me tell you a story about things that I have seen in my years of teaching"
+		"$user$: Sure, that would be nice."
+		"Ms. Render: You see as I have taught students for about 30 years now, I've seen students of all kinds."
+		"Some were very sociable while others were more reserved and to themself."
+		"And a few of the students who were more quite and to themself did have the same issues that you have."
+		"They were able to overcome this however by making an extra effort to be around other people and talk with them"
+		"As they grow up you are able to see a positive change in them and they were sometimes better at reading emotions than the students who seened to be lively and talkative."
+		"$user$: So what you are saying is that if i keep trying I can learn how to understand emotions as well?"
+		"Ms. Render: I am saying that with enough effort I believe that anything you put your mind to is possible"
+		"$user$: Wow thanks this means a lot!"
+		"..."
+		"I think I feel happy right now..."
+		"Ms. Render: I am sure you do. Good Luck on your project I know that you will do a great job"
+		"$user$: Thank you, have a good day"
+		"Where to now"<
+			"Go to my house" JUMP("HOUSE")
+			"Go to the park" JUMP("PARK")
+			"Go to the aquarium" JUMP("AQUARIUM")
+			"Go to the store" JUMP("STORE")
+		>
 }
-[WAIT]{
-	wait=true // used for future decisions
-	"Abby: I am sure its nothing"
-	JUMP("NOTHING")
-}
-[NOTHING]{
-	"RYAN: And it all leads to here eventually"
-	"What to do try other options"<
-		"Yes" GOTOE("choose")
-		"I had enough" QUIT()
+[SCHOOLGAME]{
+	"Ms. Render: Are you ready to get started?"<
+		"Yes I am ready to play" GOTO("yes")
+		"Not yet" GOTO("no")
 	>
+	::no::
+		"Ms. Render: Ok that is fine, come to me when you are ready to play"
+		"$user$: Well until I am ready I should check out some other places"<
+			"Go to my house" JUMP("HOUSE")
+			"Go to the park" JUMP("PARK")
+			"Go to the aquarium" JUMP("AQUARIUM")
+			"Go to the store" JUMP("STORE")
+		>
+	::yes::
+		c = ","
+		d = getPeriod()
+		e = ":"
+		q = getQuote()
+		listA=[]
+		listA[1]="Hello$c$ my name is Ms$d$ Render! What is your name?"
+		listA[2]="I$q$m not feeling so good$d$$d$$d$"
+		listA[3]="How is your day going?"
+		listA[4]="A friend of mine just gave me a gift!"
+		listA[5]="Today a student that was struggling improved really well$d$"
+		listA[6]="My dog is really sick$d$$d$$d$"
+		listA[7]="I lost my wallet earlier$d$"
+		listA[8]="I returned a lost bag to a student$d$"
+		listA[9]="The class pet just had a little baby$d$"
+		listA[10]="A friend of mine fell and broke their leg the other day$d$"
+		listB=[]
+		listB[1]=[]
+		temp=listB[1]
+		temp[1]="My name is $user$$d$"
+		temp[2]="I need to ask you a question$d$"
+		temp[3]="What do you need?"
+		temp[4]="Ms$d$ Render$e$ Nice to meet you $user$$d$ Good job with this one$d$"
+		listB[2]=[]
+		temp=listB[2]
+		temp[1]="Thats good to hear$d$"
+		temp[2]="Oh no is everything ok?"
+		temp[3]="I am feeling a bit hungry right now"
+		temp[4]="Ms$d$ Render$e$ Thanks$c$ I hope I feel better as well$d$ And that is correct!"
+		listB[3]=[]
+		temp=listB[3]
+		temp[1]="Are you feeling ok?"
+		temp[2]="What do you think is a good project idea is$d$"
+		temp[3]="I am doing alright$c$ how is your day going?"
+		temp[4]="Ms$d$ Render$e$ I am doing good thanks$d$ And that is correct!"
+		listB[4]=[]
+		temp=listB[4]
+		temp[1]="I think gifts are dumb$d$"
+		temp[2]="Wow that must have been exciting$c$ do you like the gift?"
+		temp[3]="Why should I care?"
+		temp[4]="Ms$d$ Render$e$ Yes I am excited$c$ it was an amazing gift!"
+		listB[5]=[]
+		temp=listB[5]
+		temp[1]="That sucks$c$ improvement isn$q$t a good thing$d$"
+		temp[2]="Wow you must be feeling sad about that$d$"
+		temp[3]="Wow that must have made you happy$d$"
+		temp[4]="Ms$d$ Render$e$ Yes I am happy$c$ it$q$s a teacher dream to see their students grow!"
+		listB[6]=[]
+		temp=listB[6]
+		temp[1]="That$q$s not good$c$ what do you think is wrong?"
+		temp[2]="I don$q$t like dogs anyway$d$"
+		temp[3]="Cats make better pets$d$"
+		temp[4]="Ms$d$ Render$e$ Oh I took Rex to the vet$c$ he got sick from drinking water from a dirty puddle$d$ Doctors say he$q$ll get better in no time$d$"
+		listB[7]=[]
+		temp=listB[7]
+		temp[1]="I wish I had tons of money$d$"
+		temp[2]="People shouldn$q$t be so bad with their possessions$d$"
+		temp[3]="You must have been worried$c$ did you find it?"
+		temp[4]="Ms$d$ Render$e$ Yes I did and I was worried I have all of my important info in there$d$ I left it in the teachers lounge$d$ Randy the Gym teacher told me and gave it back to me$d$"
+		listB[8]=[]
+		temp=listB[8]
+		temp[1]="The student must have felt happy to get their bag back$d$"
+		temp[2]="I don$q$t know how people can lose their stuff$d$"
+		temp[3]="People shouldn$q$t be so bad with their possessions$d$"
+		temp[4]="Ms$d$ Render$e$ Yes he was very happy to get his bag back$d$"
+		listB[9]=[]
+		temp=listB[9]
+		temp[1]="Ok thats kinda boring$d$"
+		temp[2]="That is really cool$c$ everyone must be excited to have a little hamster"
+		temp[3]="What does a rat do anyway$d$"
+		temp[4]="Ms$d$ Render$e$ Yes it is very nice to have a new little guy running around$d$"
+		listB[10]=[]
+		temp=listB[10]
+		temp[1]="Ouch that must have hurt$c$ is he ok?"
+		temp[2]="He should have watched where he was going$d$"
+		temp[3]="I fell and nothing happened to me$d$"
+		temp[4]="Ms$d$ Render$e$ Yes it was$c$ but he$q$ll make a full recovery$d$"
+		listC=[1,2,3,2,3,1,3,1,2,1]
+		count = 0
+		"Ms. Render: Let's give this game a go."
+		::loop::
+			length = getLength(listA)
+			if length>0 then GOTO("IND")|GOTO("Um")
+			::IND::
+				ind = randomInt(1,length)
+				A = listRemove(listA,ind)
+				B = listRemove(listB,ind)
+				C = listRemove(listC,ind)
+				b1=B[1]
+				b2=B[2]
+				b3=B[3]
+				b4=B[4]
+				"$A$"<
+					"$b1$" GOTO("c1")
+					"$b2$" GOTO("c2")
+					"$b3$" GOTO("c3")
+				>
+				::c1::
+					if C==1 then GOTO("correct")|GOTO("wrong")
+				::c2::
+					if C==2 then GOTO("correct")|GOTO("wrong")
+				::c3::
+					if C==3 then GOTO("correct")|GOTO("wrong")
+				::correct::
+					count=count+1
+					"$b4$"
+					GOTO("loop")
+				::wrong::
+					"Ms. Render: Um... Lets try another one!"
+					GOTO("loop")
+		::Um::
+			if count>5 then GOTO("win")|GOTO("tryagain")
+			::tryagain::
+				"MS. Render: Well I think we should try this game again..."
+				"Are you ready?"<
+					"Yes I am ready to try again" GOTO("yes")
+					"Not yet" GOTO("no")
+				>
+	::win::
+		played_gameschool = true
+		"MS. Render: Good job you got $count$ correct!"
+		"$user$: That's awesome! Thanks for your help"
+		if count==10 then GOTO("perfect")|GOTO("improve")
+		::perfect::
+			"Ms. Render: Wow amazing! You got them all right! I think you have mastered this. Good Luck on the rest of your project."
+			"$user$: Thank you, you have been a great help!"
+			"Where to now?"<
+				"Go to my house" JUMP("HOUSE")
+				"Go to the park" JUMP("PARK")
+				"Go to the aquarium" JUMP("AQUARIUM")
+				"Go to the store" JUMP("STORE")
+			>
+		::improve::
+			"Ms. Render: You did good! $count$/10 correct not bad!"
+			"$user$: Thank you!"
+			"Ms. Render: Do you want to try for a better score?"<
+				"Yes, I do want to see if I can get better." GOTO("yes")
+				"No, I think I have a good enough understanding of this now." GOTO("no")
+			>
 }
+[PARK]{
+	BG("images/Park.png")
+	BGStop()
+	ParkBG(true)
+	park = true
+	"The park is across across from the school."
+	"Most of the students go there after school to play before they go home."
+	"You see John, a student in your class on the swings and approach him"
+	"$user$: Hello John, are you having fun on the swings?"
+	"John: Yeah I am. I'm gonna keep playing until I have to go home. I still don't know what I'll write my essay on. Do you know?"
+	"$user$: Yes, I will do mine on Harry the frog and emotions. I want to figure out why he is happy throughout his day."
+	"John: That's cool! How are you going to figure it out though?"
+	"$user$: I plan to take Ms. Render's advice and study emotions in different areas I am familiar with."
+	"John: So what are you gonna do here?"
+	"$user$: Since there are many people here I know, I plan to ask them questions and understand their current emotions."
+	"John: I think five students from our class are still here, including me. Ask us your questions for your essay so you can write your essay."
+	"$user$: That sounds like a good idea"
+	"$user$: So John... "<
+		"May I ask you a question?" GOTO("yea")
+		"Goodbye" GOTO("byeJohn")
+	>
+	::yea::
+		"John: Sure, what do you want to ask me?"<
+			"How are you doing?" GOTO("doing")
+			"Are you happy?" GOTO("happy")
+			"Goodbye" GOTO("byeJohn")
+		>
+	::doing::
+		"John: I am doing fine, how are you doing?"<
+			"I am good, why are you feeling fine?" GOTO("fine")
+			"I'm alright what is making you feel that way?" GOTO("fine")
+			"Goodbye" GOTO("byeJohn")
+		>
+	::fine::
+		"John: I love getting some freah air in the park."
+		"John: Being here makes me happy"
+	::happy::
+		"John: The park makes me feel happy because it where I get to hang out with all of my friends."<
+			"So hanging out with your friends is what makes you happy?" GOTO("friends")
+			"What about your friends makes you happy?" GOTO("friendsPre")
+		>
+	::friendsPre::
+		"John: My friends allow me to relax and enjoy fun times. They are always there to make me laugh."
+	::friends::
+		"John: Hanging with my friends is one of best things that could happend on any day."
+		friends=true
+	::byeJohn::
+		"$user$: Alright John thats all of the questions that I have for you. Thanks for taking the time to help me out"
+		"John: Don't mention it... Looks like my friends are over there..."
+		"Randy: Hey John! Who's this?"
+		"John: Oh this is $user$ he's in our class, he sits in the back a lot so you may have missed him in class."
+		"Randy: Hey $user$ how is everything?"<
+			"I am good, working on the essay for class, can you help me?" GOTO("essayRandy")
+			"All is good, how are you?" GOTO("how")
+		>
+		::how::
+			randy=true
+			"Randy: I am doing okay, I am having tons of trouble with my essay for class."
+			"$user$: Thats funny I am having trouble with my essay as well... Maybe we can help each other. What is your essay about?"
+			"Randy: My essay is on: What makes people dream"
+			"$user$: Thats cool, I like that topic"
+		::essayRandy::
+			"Randy: What is your essay about?"<
+				"It's about what makes people feel emotions" GOTO("emotion")
+				"Nothing" GOTO("byeRandy")
+			>
+		::emotion::
+			help=true
+			"Randy: Hmm that is an interestin question... What made you pick that one?"
+			"$user$: I thought of it after Ms. Render read the story in class."
+			if asked_question==true then GOTO("asked")|GOTO("notasked")
+			::asked::
+				"Randy: Ah I remember now, you asked this in class, and the teacher said that it would make a good topic to do."
+				"$user$: Yes it sounded like a good idea at first, but it is much harder than I thought it would be."
+				::jumpback::
+				if randy==true then GOTO("a1")|GOTO("a2")
+				::a1::
+					"Your question sounds just as hard though"
+					"Randy: Yeah it is leaving me confused... I have no idea why people want to dream. Do you have any dreams?"<
+						"Yes" GOTO("dreams")
+						"Not really" GOTO("none")
+					>
+				::dreams::
+					"$user$: I have a dream that one day I will completely understand why people feel the way they do when different things happen to them"
+					"Randy: That's an interesting dream... Maybe people dream about things that they really want to achieve in life"
+					"$user$: When you put it like that, it makes a lot of sense. People want to dream about the things that they desire and want badly"
+					"Randy: Yes, that does make sense... Thanks a lot $user$ you helped me out big time"
+					"$user$: Happy to help"
+					GOTO("a2")
+				::none::
+					"$user$: I don't really have any dreams."
+					"Randy: Nothing?"
+					"$user$: Nope, for me there just doesn't seem to be anything that I strive for?"
+					"Randy: That must suck, I am the same. There isn't anything I feel is worth dreaming about. To me everything feels the same regardless of what I think."
+					"$user$: Hmm... wow seems like we both picked a tough project."
+					"Randy: Yeah, what do you think makes people dream?"<
+						"I think people dream to help them stick to a goal" GOTO("goal")
+						"People dream about what they can't do" GOTO("cant")
+					>
+				::goal::
+					"Randy: Hmm that's an interesting thought... Maybe people dream about things that they really want to achieve in life"
+					"$user$: When you put it like that, it makes a lot of sense. People want to dream about the things that they desire and want badly"
+					"Randy: Yes, that does make sense... Thanks a lot $user$ you helped me out big time"
+					"$user$: Happy to help"
+					GOTO("a2")
+				::cant::
+					"Randy: Hmm, that may be the case when I think about it... Perhaps people dream about the unattainable in life."
+					"$user$: Yeah, that may be the case..."
+					"Randy: Yes, that does make sense... Thanks a lot $user$ you helped me out big time"
+					"$user$: Happy to help"
+				::a2::
+					"$user$: What do you think would be a good way to apporach my essay?"
+					"Randy: Well you said you want to know what makes people happy right? Let me tell you something."
+					if randy==true then GOTO("a3")|GOTO("a4")
+					::a3::
+						"Randy: Eariler today I eas confused and annoyed with what I could do for this essay."
+						"Randy: Then you came along and help me out a lot..."
+						"Randy: I think doing good things for people and putting forth an honest effort is what helps a lot."
+						"Randy: Doing good for the sake of doing good and not for something you can get in return."
+						"$user$: So helping people can make others happy... But for some reason helping you made me feel good too."
+						"Randy: Yeah, that happens a lot when you do good things too... Also if people like you they will enjoy being around you as well."
+						GOTO("byeRandy")
+					::a4::
+						"Randy: I feel that you should think about what may make others feel happy"
+			::notasked::
+				"Randy: Ah that story was an interesting one. What did you think of it?"
+				"$user$: I felt it was a good story, seeing Harry happy made me think about what makes one happy and how one could become happy."
+				"Randy: That sounds like a good idea."
+				"$user$: Yes it sounded like a good idea at first, but it is much harder than I thought it would be."
+				GOTO("jumpback")
+		::byeRandy::
+			if help==true then GOTO("here")|GOTO("nohelp")
+			::here::
+			"$user$: Thanks for helping me with finishing my essay."
+			if randy==true then GOTO("NP")|GOTO("np")
+			::NP::
+				"Randy: Don't mention it, you helped me a great deal as well!"
+				"$user$: Haha, fellow classmates helping each other"
+				"Randy: Hey, after you are done working on your essay feel free to join us."
+				"Randy: We will be playing a game of kick ball, and would love another player."
+				"$user$: That sounds like a lot of fun"<
+					"I'd love to play" GOTO("play")
+					"I don't really like kickball" GOTO("next")
+				>
+				::play::
+					"Randy: Cool looking forward to it."
+					kickball = true
+					GOTO("next")
+			::np::
+				"Randy: Happy to help."
+				GOTO("next")
+			::nohelp::
+				"Randy: Well, I would have loved to help you, but you didn't tell me what you are working on."
+				"$user$: Yeah, I don't know what I was expecting would happen."<
+					"My essay is about what makes people feel emotions" GOTO("emotion")
+					"That's fine, I don't really like talking about it much" GOTO("endpark")
+				>
+			::next::
+				"Randy: Oh look Sally and Amy are coming over here."
+				"Sally: Hey who is this..."
+				"Amy: I think I've seen them in our class before."
+				"Sally: Yeah you're the one who sits in the back of class, how are you doing?"<
+					"I am doing good, nice to meet you" GOTO("igood")
+					"I am doing alright, confused on this project that I am doing" GOTO("ibusy")
+				>
+				::igood::
+					"Sally: Thats good to hear and I am doing fine as well"
+					"$user$: That's good!"<
+						"Ask Amy how she is doing?" GOTO("askamy")
+						"What brings you to the park" GOTO("whypark")
+						"Could you lend me some assistance on this essay of mine?" GOTO("noaskamy")
+					>
+				::askamy::
+					"$user$: Hey Amy how are you doing?"
+					"Amy: I am doing good, a little tired though, thanks for asking."
+					"$user$: Thats good to hear, why are you tired?"
+					"Amy: I have been really busy with my little brother."
+					"He's four years old and is always causing trouble for me."
+					"$user$: How so?"
+					"Amy: He keeps using his youngness to get me in trouble. You know how little siblings can be."
+					"$user$: Um I don't have any siblings..."
+					"Amy: Oh um..."
+					"Sally: Haha, same with me as well no brothers or sisters to get in my way."
+					"Amy: Lucky..."
+					"$user$: Haha, but I always wanted a brother or sister."
+					siblings=true
+					"Sally: How come?"
+					"$user$: I wanted to have someone I could have fun with."
+					"Amy: You know, while I do want to kill my little brother half of the time, he does make our family happier."
+					"$user$: Really, family can make you happy too?"
+					"Amy: Yeah they can, I love my family."
+					"$user$: Awesome, what about them makes you happy?"
+					"Amy: Well my family supports me and helps me when I am feeling sad."
+					"They always know just what to say to make me feel better."
+					"$user$: Oh I see, your family is able to turn your saddness into happiness."
+					"Amy: Yes that's what they are doing..."
+					"Sally: I could never be bothered by family"
+					"Amy: Hmm... This is the first time I am hearing about this."
+					"Sally: Well for me I feel that having fun is more important then family."
+					"$user$: That's interesting why do you say that?"
+					"Sally: They just don't get me much. Which is why I spend most of my time having fun in the park."
+					"$user$: Ah, that's why... what about the park do you like"
+				::whypark::
+					if siblings==true then GOTO("sib")|GOTO("nosib")
+					::sib::
+						"Sally: I love going to the park. I get to hang out and not have to worry about everything going on at home..."
+						"Amy: What do you mean about going on at home?"
+						"Sally: Well, my parents have been acting strange lately."
+						"They are constantly yelling and it makes me sad."
+						"Sometimes I cry for hours wondering why this is happening."
+						if played_gameschool==true then GOTO("emotionPlus")|GOTO("emotionMinus")
+						::emotionPlus::
+							"$user$: That must be tough."
+							"Sally: It is, I don't know how to handle this."
+							"Amy: Well you have friends that are able to help you."
+							if friends==true then GOTO("yesF")|GOTO("noF")
+							::yesF::
+								"$user$: Yeah, friends are a great support that can bring happiness."
+								"Sally: You are right, I'd like you to be my friend. You are such a caring person."
+								"$user$: Sure, I'd love to be your friend."
+								"Amy: Haha, look at you two"
+								"$user$ & Sally: What?"
+								"Amy: Nothing..."
+								sallyFriend = true
+								GOTO("GoodAsk")
+							::noF::
+								"$user$: yeah..."
+								"Amy: Well Sally, we are here to talk if you need."
+								"Sally: Thanks, I'll call you later."
+								"I think I over heard Randy saying that you are working on a project."
+								GOTO("ibusy")
+						::emotionMinus::
+							"$user$: Oh, that sucks."
+							"Sally: Yea it does... "
+							"I think I over heard Randy saying that you are working on a project."
+							GOTO("ibusy")
+					::nosib::
+						"Sally: I love going to the park. I get to hang out and have fun with my friends!"
+						"$user$: That sounds nice, I feel like the park is a nice relaxing place too."
+						"Sally: It is..."
+						"Amy: I enjoy the park as well."
+						"$uesr$: The park has a nice calm feel to it... And the sun is out and it feels good."
+						"Amy: Yeah the nice breeze and sun really makes you enjoy life."
+						"Sally: It does I do enjoy this weather too..."
+						if kickball==true then GOTO("kickit")|GOTO("nokick")
+						::kickit::
+							"Looking forward to our kickball game later today."
+							"$user$: Yeah Randy told me about that, told me I should stop by later and play when I am done working on my essay."
+							"Sally: That sounds fun. What are you working on?"
+							GOTO("GoodAsk")
+						::nokick::
+							"$user$: As much as I would like to relax, I have to finish my essay for class."
+							"Sally: What is your essay about?"
+							GOTO("GoodAsk")
+				::noaskamy::
+					"Sally: Sure I guess..."
+				::ibusy::
+					"$user$: I need help with figuring out what makes people happy."
+					"Sally: Thats easy, having fun is what makes people happy."
+					"Being fun is the way to go"
+					"$user$: Being fun?"
+					"Sally: Yes boring people are no fun, which means they cannot make others happy"
+					"$user$: Well being boting doesn't make people unhappy do they?"
+					"Sally: No, but they won't really change the emotions you are currently feeling."
+					"$user$: I think I understand what you are saying. Thanks for the help"
+					GOTO("lastone")
+				::GoodAsk::
+					"$user$: My essay in on what makes one happy."
+					"Sally: Oh thats interesting... I think happiness comes from having fun with friends and being satisifed with ones life."
+					"Amy: Yes, and family too can also help one to feel happy."
+					"$user$: That makes sense. I think I can talk about that in my essay."
+					"Amy & Sally: Happy to help."
+				::lastone::
+					"$user$: Thanks, Who's that over there?"
+					"Sally: Oh, thats Rob."
+					"$user$: Rob?"
+					"Amy: Yea, Rob is the life of our group. And the one who wanted us to play some kickball."
+					"$user$: Cool, sounds like a fun guy."
+					"Sally: He is, hmm looks like he's a bit busy right now though. Maybe you can speak to him later"
+					"$user$: Yeah thats fine I can chat with him later today. Randy, Amy, Sally and John thanks for your help today."
+					"John: Yeah don't mention it we were happy to help you with your essay."
+					if kickball==true then GOTO("closeA")|GOTO("closeB")
+					::closeA::
+						"Hope to see you later for the kickball game."
+						"$user$: Wouldn't miss it."
+						"John: Awesome!"
+						"$user$: Alright see you all later."
+						"Everyone: See you later at our game."
+						GOTO("endpark")
+					::closeB::
+						"$user$: Alright see you all later."
+						"Everyone: See you later in class."
+	::endpark::
+		"Where should I go?"<
+			"Go to my house" JUMP("HOUSE")
+			"Go to the school" JUMP("SCHOOL")
+			"Go to the aquarium" JUMP("AQUARIUM")
+			"Go to the store" JUMP("STORE")
+		>
+}
+
+[AQUARIUM]{
+	BG("images/aqua.png")
+	BGStop()
+	AquaBG(true)
+	aquarium = true
+	"You walk into the aquarium near your house."
+	"You come here once a week to watch the fish swim."
+	"The exhibits with the most fish are the Underwatered and Swim School."
+	"Jane works there every Monday and Tuesday From 10:00AM to 7:00 PM closing time."
+	"Jane: Hi $user$, are you here to see the exhibits?"
+	"$user$: I am but I am also here for research." 
+	"Jane: What do you mean research?"
+	"$user$: In class Ms. Render read a book about a frog. The frog was happy and I was confused. She suggested I do my essay on emotions and why they change. Since frogs are amphibians I thought it was best to go to the aquarium."
+	"Jane: Well we do have one exhibits about frogs. We have four different species living together. They are all underwater frogs that swim in the water and eat bugs."
+	"$user$: They must be similar to the frog in the book." 
+	"Jane: I will bring you over to the exhibit and you can try to find the frog like the one in your book. They may not be exactly the same but the behaviors of amphibians are similar. Let's go take a look."
+	MINIGAME_AQUARIUM()
+	GOTOE("choose")
+
+}
+
+[STORE]{
+	BG("images/store.png")
+	BGStop()
+	StoreBG(true)
+	store = true
+	if gamestoreplayed==true then GOTO("thanks")|GOTO("again")
+	::thanks::
+		"Jake: Thanks again for your help today. You did a great job helping out."
+		"$user$: It was fun, and I did feel good while I was helping you out."
+		"Jake: That's awesome... You know I forgot to mention this, but here."
+		candy = true
+		"$user$: Thanks I love EpicBars they taste so good."
+		"Jake: Don't mention it I am happy you helped out."
+		GOTO("letsgo")
+	::again::
+		"Walking into the local deli store, you see your friend Jake."
+		"Jake has owned the store for over a decade."
+		"Jake: Hey $user$, what can I get for you today?"
+		"$user$: Hello Jake, I am doing research for a essay I need to write."
+		"Jake: That sounds interesting, what type of research are you doing?"
+		"$user$: I am studying emotions and why they change. I have to write a report on it for school." 
+		"Jake: How is the research going? Anything I can do to help?" 
+		"$user$: I don't know. What emotion are you going through right now?"
+		"Jake: Well I am curious about your adventures and happy because today has been a good day."
+		"$user$: What made today good?"
+		"Jake: I was able to help my customers and work was pretty smooth." 
+		"$user$: But why are you happy? Is it because nothing difficult happened?"
+		"Jake : Yes and because I am doing what I enjoy. Working at the store is the best for me."
+		"$user$: Do you think that is the same for everyone?"
+		"Jake: Every person is different but that could be part of the reason as to why they are happy." 
+		"$user$: How do I know if it is the same or not?"
+		"Jake : How about we test this out? Come behind the counter and lets help the customers. A customer will make a request and you will have to give it to them. Look at their face and if they seem happy then you were correct, if not you try again."
+		"$user$: OK, I can try."
+		store = GameStore(true)
+		if store==true then GOTO("good")|GOTO("bad")
+	::good::
+		"Jake: Awesome job! You are a pro at this. So many happy customers"
+		gamestoreplayed = true
+	::letsgo::
+		"Where should I go?"<
+			"Go to my house" JUMP("HOUSE")
+			"Go to the school" JUMP("SCHOOL")
+			"Go to the park" JUMP("PARK")
+			"Go to the aquarium" JUMP("AQUARIUM")
+		>
+	::bad::
+		"Jake: Hehe that was not that good... seems like you were trying to give them what they didn't want!"
+		"Jake: I'll give you another chance."
+		"Jake: So what will it be, try again?"<
+			"Yeah, I'll give it another go" GOTO("again")
+			"I think I'll try again a bit later" GOTO("letsgo")
+		>
+}
+
+[END]{
+	BGStop()
+	CreditsBG(true)
+	"After going to each location you learned a lot about emotion and happiness specifically."
+	"Emotions are helpful in communicating and expressing what you like or dislike."
+	"The frog enjoyed his simple life, hanging out with his friends and helping them."
+	"You write your essay on everything you learned. Here is what you discovered throughout the day" 
+	"You finish your essay and go to sleep at 9:25PM. School starts tomorrow at 8:15AM and you are prepared to present your essay."
+	"You talk about emotions and how each person expresses them differently."
+	"Harry the frog was happy because he was content with his lifestyle."
+	"Emotions can change throughout the day and can seem confusing. But with patience and practice they can be understood."
+	"THE END"
+	QUIT()
+}
+
+	
+	

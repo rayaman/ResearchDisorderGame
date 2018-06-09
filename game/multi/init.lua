@@ -605,15 +605,7 @@ function multi:hold(task)
 		local env=self.Parent:newEvent(task)
 		env:OnEvent(function(envt) envt:Pause() envt.Active=false end)
 		while env.Active do
-			if love then
-				if love.graphics then
-					self.Parent:lManager()
-				else
-					self.Parent:Do_Order()
-				end
-			else
-				self.Parent:Do_Order()
-			end
+			self.Parent:Do_Order()
 		end
 		env:Destroy()
 		self:Resume()
@@ -1464,7 +1456,9 @@ function thread.sleep(n)
 	coroutine.yield({"_sleep_",n or 0})
 end
 function thread.hold(n)
+	if n then if n() then return false end end
 	coroutine.yield({"_hold_",n or function() return true end})
+	return true
 end
 function thread.skip(n)
 	coroutine.yield({"_skip_",n or 0})
@@ -1992,7 +1986,7 @@ function multi:newThreadedLoop(name,func)
 				thread.sleep(c.restRate) -- rest a bit more when a thread is paused
 			else
 				for i=1,#c.func do
-					c.func[i](os.clock()-self.Start,c)
+					c.func[i](c,os.clock()-self.Start)
 				end
 				thread.sleep(c.updaterate) -- lets rest a bit
 			end

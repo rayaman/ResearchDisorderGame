@@ -9,11 +9,12 @@ multi.integration={}
 multi.integration.love2d={}
 multi.integration.love2d.ThreadBase=[[
 tab={...}
-__THREADID__=table.remove(1,tab)
-__THREADNAME__=table.remove(1,tab)
+__THREADID__=table.remove(tab,1)
+__THREADNAME__=table.remove(tab,1)
 require("love.filesystem")
 require("love.system")
 require("love.timer")
+require("love.image")
 require("multi")
 GLOBAL={}
 setmetatable(GLOBAL,{
@@ -34,7 +35,7 @@ setmetatable(GLOBAL,{
 function __sync__()
 	local data=__mythread__:pop()
 	while data do
-		love.timer.sleep(.001)
+		love.timer.sleep(.01)
 		if type(data)=="string" then
 			local cmd,tp,name,d=data:match("(%S-) (%S-) (%S-) (.+)")
 			if name=="__DIEPLZ"..__THREADID__.."__" then
@@ -158,14 +159,6 @@ end
 function sThread.hold(n)
 	repeat __sync__() until n()
 end
-multi:newLoop(function(self)
-	self:Pause()
-	local ld=multi:getLoad()
-	self:Resume()
-	if ld<80 then
-		love.timer.sleep(.01)
-	end
-end)
 updater=multi:newUpdater()
 updater:OnUpdate(__sync__)
 func=loadDump([=[INSERT_USER_CODE]=])(unpack(tab))
